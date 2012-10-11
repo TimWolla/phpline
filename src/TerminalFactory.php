@@ -8,6 +8,7 @@
  * http://www.opensource.org/licenses/bsd-license.php
  */
 namespace phpline;
+use \phpline\internal\Configuration;
 use \phpline\internal\Log;
 
 /**
@@ -22,7 +23,7 @@ class TerminalFactory
 	private static $holder = null;
 	
 	public static function create() {
-		$type = "auto";// Configuration::getString("phpline.terminal", "auto");
+		$type = Configuration::getString("phpline.terminal", "auto");
 		
 		if ($_SERVER['TERM'] === 'dumb') {
 			$type = "none";

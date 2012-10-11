@@ -24,12 +24,108 @@ class Configuration
 	 *
 	 * @since 2.7
 	 */
-	const JLINE_CONFIGURATION = "jline.configuration";
+	const PHPLINE_CONFIGURATION = "phpline.configuration";
 
 	/**
 	 * Default configuration file name loaded from user's home directory.
 	 */
-	const JLINE_RC = ".jline.rc";
+	const PHPLINE_RC = ".phpline.rc";
+
+	private static $properties = null;
+
+	private static function initProperties() {
+		$url = self::determineUrl();
+		
+		$props = array();
+		try {
+			$props = self::loadProperties($url);
+		}
+		catch (\RuntimeException $e) {
+			// debug here instead of warn, as this can happen normally if default phpline.rc file is missing
+			Log::debug("Unable to read configuration from: ", $url, $e);
+		}
+		
+		return $props;
+	}
+	
+	private static function loadProperties($url) {
+		if (!file_exists($url)) throw new \RuntimeException('Cannot find configuration file');
+		$properties = parse_ini_file($url);
+		
+		Log::debug('Loaded properties:');
+		
+		foreach ($properties as $key => $value) {
+			Log::debug("  ", $key, "=", $value);
+		}
+		
+		return $properties;
+	}
+	
+	private static function determineUrl() {
+		// See if user has customized the configuration location via sysprop
+		// $tmp = System.getProperty(JLINE_CONFIGURATION);
+		// if (tmp != null) {
+		//	return Urls.create(tmp);
+		// }
+		// else {
+			// Otherwise try the default
+			$file = rtrim(self::getUserHome(), '/').'/'.self::PHPLINE_RC;
+			return $file;
+		// }
+	}
+	
+	public static function reset() {
+		Log::debug("Resetting");
+		self::$properties = null;
+		
+		// force new properties to load
+		self::getProperties();
+	}
+	
+	public static function getProperties() {
+		if (self::$properties === null) {
+			self::$properties = self::initProperties();
+		}
+		
+		return self::$properties;
+	}
+	
+	public static function getString($name, $defaultValue = null) {
+		if ($name === null) throw new \InvalidArgumentException("Expected \$name to be non-null");
+		
+		$value = null;
+		
+		// Check sysprops first, it always wins
+		// value = System.getProperty(name);
+		
+		if ($value === null) {
+			// Next try userprops
+			$props = self::getProperties();
+			
+			$value = isset($props[$name]) && $props[$name] !== null ? $props[$name] : $defaultValue;
+		}
+		
+		return $value;
+	}
+	
+	public static function getBoolean($name, $defaultValue) {
+		$value = self::getString($name);
+		
+		if ($value === null) return $defaultValue;
+		$value = strtolower($value);
+		
+		return strlen($value) === 0 || $value === "1" || $value === "on" || $value === "true";
+	}
+	
+	public static function getInteger($name, $defaultValue) {
+		$str = self::getString($name);
+		
+		if ($str === null) {
+			return $defaultValue;
+		}
+		
+		return intval($str);
+	}
 
 	//
 	// System property helpers

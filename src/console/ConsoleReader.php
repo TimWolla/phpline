@@ -96,7 +96,7 @@ class ConsoleReader
 
 	private $expandEvents = true;
 
-	private $bellEnabled = false; //!Configuration.getBoolean(JLINE_NOBELL, true);
+	private $bellEnabled = false;
 
 	private $mask;
 
@@ -159,6 +159,9 @@ class ConsoleReader
 	private $state = State::NORMAL;
 
 	public function __construct($appName = null, $in = null, $out = null, Terminal $term = null, $encoding = "") {
+		$this->bellEnabled = !Configuration::getBoolean(self::JLINE_NOBELL, true);
+		$this->autoprintTreshold = Configuration::getInteger(self::JLINE_COMPLETION_THRESHOLD, 100); // same default as bash;
+		
 		$this->buf = new CursorBuffer();
 		$this->completionHandler = new CandidateListCompletionHandler();
 		$this->history = new MemoryHistory();
@@ -175,7 +178,7 @@ class ConsoleReader
 	}
 
 	private function getInputRc() {
-		$path = null; // Configuration.getString(JLINE_INPUTRC);
+		$path = Configuration::getString(self::JLINE_INPUTRC);
 		if ($path === null) {
 			$f = Configuration::getUserHome().'/'.self::INPUT_RC;
 			if (!file_exists($f)) {
@@ -192,7 +195,7 @@ class ConsoleReader
 	}
 
 	public function setInput($in) {
-		$this->escapeTimeout = 100; //Configuration.getLong(JLINE_ESC_TIMEOUT, 100);
+		$this->escapeTimeout = Configuration::getInteger(self::JLINE_ESC_TIMEOUT, 100);
 		/*
 		 * This is gross and here is how to fix it. In getCurrentPosition()
 		 * and getCurrentAnsiRow(), the logic is disabled when running unit
@@ -2823,7 +2826,7 @@ class ConsoleReader
 	 * The number of tab-completion candidates above which a warning will be
 	 * prompted before showing all the candidates.
 	 */
-	private $autoprintThreshold = 100;//Configuration.getInteger(JLINE_COMPLETION_THRESHOLD, 100); // same default as bash
+	private $autoprintThreshold = 100;
 
 	/**
 	 * @param threshold the number of candidates to print without issuing a warning.
@@ -2922,8 +2925,8 @@ class ConsoleReader
 	// Printing
 	//
 
-	const CR = PHP_EOL; // Configuration.getLineSeparator();
-
+	const CR = PHP_EOL; 
+	
 	/**
 	 * Output the specified character to the output stream without manipulating the current buffer.
 	 */

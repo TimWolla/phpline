@@ -28,7 +28,7 @@ final class TerminalLineSettings
 	private $configLastFetched = 0;
 	
 	public function __construct() {
-		$this->sttyCommand = "stty";// Configuration.getString("phpline.stty", "stty");
+		$this->sttyCommand = Configuration::getString("phpline.stty", "stty");
 		$this->config = $this->get("-a");
 		$this->configLastFetched = microtime(true);
 		
