@@ -60,6 +60,8 @@ class ConsoleKeys {
 		$this->keys = $this->keyMaps[KeyMap::EMACS];
 		
 		try {
+			if (!file_exists($inputrcUrl)) throw new \RuntimeException('Unable to locate InputRC');
+			
 			$input = fopen($inputrcUrl, 'rb');
 			$finally = new FinallyEmulator(function () use ($input) {
 				fclose($input);
