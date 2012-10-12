@@ -21,7 +21,7 @@ final class NullCompleter implements Completer
 {
 	public static $INSTANCE = null;
 
-	public function complete($buffer, $cursor, array $candidates) {
+	public function complete($buffer, $cursor, array &$candidates) {
 		return -1;
 	}
 	

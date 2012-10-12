@@ -805,7 +805,7 @@ class ConsoleReader
 	 *
 	 * @return the number of characters backed up
 	 */
-	private function backspace($num = 1) {
+	public function backspace($num = 1) {
 		if ($this->buf->cursor == 0) {
 			return 0;
 		}
@@ -2793,7 +2793,7 @@ class ConsoleReader
 		$cursor = $this->buf->cursor;
 
 		$position = -1;
-
+		
 		foreach($this->completers as $comp) {
 			if (($position = $comp->complete($bufstr, $cursor, $candidates)) != -1) {
 				break;

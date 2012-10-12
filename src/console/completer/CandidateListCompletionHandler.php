@@ -34,11 +34,11 @@ implements CompletionHandler
 		$buf = $reader->getCursorBuffer();
 
 		// if there is only one completion, then fill in the buffer
-		if (count(candidates) == 1) {
+		if (count($candidates) == 1) {
 			$value = $candidates[0];
 
 			// fail if the only candidate is the same as the current buffer
-			if ($value.equals === $buf->__toString()) {
+			if ($value === $buf->__toString()) {
 				return false;
 			}
 

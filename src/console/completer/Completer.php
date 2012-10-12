@@ -34,5 +34,5 @@ interface Completer
      * @param candidates    The {@link List} of candidates to populate
      * @return              The index of the <i>buffer</i> for which the completion will be relative
      */
-    public function complete($buffer, $cursor, array $candidates);
+    public function complete($buffer, $cursor, array &$candidates);
 }
