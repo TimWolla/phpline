@@ -92,7 +92,7 @@ final class Log
 		self::$TRACE = true;
 	}
 	
-	public static function enableTrace() {
+	public static function disableTrace() {
 		self::$TRACE = false;
 	}
 	
