@@ -2247,7 +2247,7 @@ class ConsoleReader
 				 */
 				$success = true;
 
-				if ($o) {
+				if (is_int($o)) {
 					$op = $o;
 
 					/*
