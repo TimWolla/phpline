@@ -597,7 +597,7 @@ class ConsoleReader
 								$i = strlen($str);
 								$idx = $this->searchBackwards($ss, $this->history->key(), true);
 								if ($idx < 0) {
-									throw new \InvalidArgumentException("!" . ss . ": event not found");
+									throw new \InvalidArgumentException("!" . $ss . ": event not found");
 								} else {
 									$rep = $this->history->get($idx)->__toString();
 								}
