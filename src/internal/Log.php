@@ -20,11 +20,10 @@ final class Log
 {
 	///CLOVER:OFF
 
-	const TRACE = true;
-
-	const DEBUG = true;
-
 	private static $output = STDERR;
+	
+	private static $TRACE = false;
+	private static $DEBUG = false;
 
 	public static function getOutput() {
 		return self::$output;
@@ -41,12 +40,7 @@ final class Log
 	public static function render($out, $message) {
 		if (is_array($message)) {
 			fwrite($out, "[");
-			for ($i = 0; $i < count($message); $i++) {
-				fwrite($out, $message[$i]);
-				if ($i + 1 < count($message)) {
-					fwrite($out, ",");
-				}
-			}
+			fwrite($out, implode(',', $message));
 			fwrite($out, "]");
 		}
 		else {
@@ -75,15 +69,31 @@ final class Log
 	}
 	
 	public static function trace() {
-		if (self::TRACE) {
+		if (self::$TRACE) {
 			self::log(Level::TRACE, func_get_args());
 		}
 	}
 	
 	public static function debug() {
-		if (self::TRACE || self::DEBUG) {
+		if (self::$TRACE || self::$DEBUG) {
 			self::log(Level::DEBUG, func_get_args());
 		}
+	}
+	
+	public static function enableDebug() {
+		self::$DEBUG = true;
+	}
+	
+	public static function disableDebug() {
+		self::$DEBUG = false;
+	}
+	
+	public static function enableTrace() {
+		self::$TRACE = true;
+	}
+	
+	public static function enableTrace() {
+		self::$TRACE = false;
 	}
 	
 	/**
