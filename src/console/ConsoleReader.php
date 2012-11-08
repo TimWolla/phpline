@@ -675,7 +675,7 @@ class ConsoleReader
 			if (strlen($this->buf->buffer->substring($this->buf->cursor)) === 0) $chars = array();
 			else $chars = str_split($this->buf->buffer->substring($this->buf->cursor));
 			
-			if ($this->mask !== null) {
+			if ($this->mask !== null && !empty($chars)) {
 				$chars = array_fill(0, count($chars), $this->mask);
 			}
 			if ($this->terminal->hasWeirdWrap()) {
