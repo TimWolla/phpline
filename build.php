@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 if (file_exists(__DIR__.'/target')) {
-	$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('target'), RecursiveIteratorIterator::CHILD_FIRST);
+	$it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__.'/target', FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
 	foreach ($it as $file) {
 		if ($file->isFile()) unlink($file);
 		else if ($file->isDir()) rmdir($file);
@@ -16,8 +16,8 @@ echo 'Building PHPLine'.($gitVersion ? '@'.$gitVersion : '').PHP_EOL;
 $phar = new Phar(__DIR__.'/target/phpline'.($gitVersion ? '-'.$gitVersion : '').'.phar', 0, 'phpline.phar');
 $phar->buildFromIterator(
 	new RecursiveIteratorIterator(
-		new RecursiveDirectoryIterator('src')),
-		'src');
+		new RecursiveDirectoryIterator(__DIR__.'/src', FilesystemIterator::SKIP_DOTS)),
+		__DIR__.'/src');
 $phar->setStub(str_replace('__DIR__', "'phar://phpline.phar'", file_get_contents('src/autoload.php'))." Phar::mapPhar('phpline.phar'); __HALT_COMPILER();");
 
 function fetchGitVersion($gitFolder) {
