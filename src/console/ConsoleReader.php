@@ -526,7 +526,7 @@ class ConsoleReader
 								if (count($this->history) == 0) {
 									throw new \InvalidArgumentException("!!: event not found");
 								}
-								$rep = $this->history->get($this->history->key() - 1)->__toString();
+								$rep = $this->history->get($this->history->key() - 1);
 								break;
 							case '#':
 								$sb->append($sb->__toString());
@@ -542,7 +542,7 @@ class ConsoleReader
 								if ($idx < 0) {
 									throw new \InvalidArgumentException("!?" . $sc . ": event not found");
 								} else {
-									$rep = $this->history->get($idx)->__toString();
+									$rep = $this->history->get($idx);
 								}
 								break;
 							case ' ':
@@ -580,13 +580,13 @@ class ConsoleReader
 								}
 								if ($neg) {
 									if ($idx < count($this->history)) {
-										$rep = $this->history->get($this->history->key() - $idx)->__toString();
+										$rep = $this->history->get($this->history->key() - $idx);
 									} else {
 										throw new \InvalidArgumentException(($neg ? "!-" : "!") . substr($str, $i1, $i - $i1) . ": event not found");
 									}
 								} else {
 									if ($idx >= $this->history->key() - count($this->history) && $idx < $this->history->key()) {
-										$rep = $this->history->get($idx)->__toString();
+										$rep = $this->history->get($idx);
 									} else {
 										throw new \InvalidArgumentException(($neg ? "!-" : "!") . substr($str, $i1, $i - $i1) . ": event not found");
 									}
@@ -599,7 +599,7 @@ class ConsoleReader
 								if ($idx < 0) {
 									throw new \InvalidArgumentException("!" . $ss . ": event not found");
 								} else {
-									$rep = $this->history->get($idx)->__toString();
+									$rep = $this->history->get($idx);
 								}
 								break;
 						}
@@ -620,7 +620,7 @@ class ConsoleReader
 						if ($i1 > 0 && $i2 > 0) {
 							$s1 = substr($str, i + 1, i1 - $i - 1);
 							$s2 = substr($str, $i1 + 1, $i2 - $i1 - 1);
-							$s = str_replace($s1, $s2, $this->history->get($this->history->key() - 1)->__toString());
+							$s = str_replace($s1, $s2, $this->history->get($this->history->key() - 1));
 							$sb->append($s);
 							$i = $i2 + 1;
 							break;
@@ -1467,7 +1467,7 @@ class ConsoleReader
 
 		if ($isForward) {
 			for ($i = $start; $i < $end; $i++) {
-				if (strpos($this->history->get($i)->__toString(), $searchTerm) !== false) {
+				if (strpos($this->history->get($i), $searchTerm) !== false) {
 					$idx = $i;
 					break;
 				}
@@ -1475,7 +1475,7 @@ class ConsoleReader
 		}
 		else {
 			for ($i = $end-1; $i >= $start; $i--) {
-				if (strpos($this->history->get($i)->__toString(), $searchTerm) !== false) {
+				if (strpos($this->history->get($i), $searchTerm) !== false) {
 					$idx = $i;
 					break;
 				}
@@ -1519,7 +1519,7 @@ class ConsoleReader
 					$isMatch = false;
 					if ($forward) {
 						for ($i = $idx+1; !$isMatch && $i < $end; $i++) {
-							if (strpos($this->history->get($i)->__toString(), $searchTerm) !== false) {
+							if (strpos($this->history->get($i), $searchTerm) !== false) {
 								$idx = $i;
 								$isMatch = true;
 							}
@@ -1527,7 +1527,7 @@ class ConsoleReader
 					}
 					else {
 						for ($i = idx - 1; !$isMatch && $i >= $start; $i--) {
-							if (strpos($this->history->get($i)->__toString(), $searchTerm) !== false) {
+							if (strpos($this->history->get($i), $searchTerm) !== false) {
 								$idx = $i;
 								$isMatch = true;
 							}
@@ -2218,7 +2218,7 @@ class ConsoleReader
 						if ($this->searchIndex == -1) {
 							$this->beep();
 						} else {
-							$this->printSearchStatus($this->searchTerm->__toString(), $this->history->get($this->searchIndex)->__toString());
+							$this->printSearchStatus($this->searchTerm->__toString(), $this->history->get($this->searchIndex));
 						}
 					}
 				}
