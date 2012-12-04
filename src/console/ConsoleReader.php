@@ -1430,7 +1430,8 @@ class ConsoleReader
 						$this->isAborted = true;
 					}
 					break;
-				case '\012': // Enter
+				case "\012": // NL
+				case "\015": // CR
 					$this->isComplete = true;
 					break;
 				default:

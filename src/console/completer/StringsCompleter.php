@@ -30,7 +30,7 @@ class StringsCompleter
 	}
 
 	public function complete($buffer, $cursor, array &$candidates) {
-		if ($buffer === null) {
+		if ($buffer === null || $buffer === "") {
 			foreach ($this->strings as $string) $candidates[] = $string;
 		}
 		else {
