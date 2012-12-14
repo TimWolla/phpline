@@ -784,7 +784,7 @@ class ConsoleReader
 			$this->printAnsiSequence((1 + $newCol) . "G");
 			return;
 		}
-		$this->print(self::BACKSPACE, $num);
+		$this->_print(self::BACKSPACE, $num);
 //		flush();
 	}
 
@@ -1136,7 +1136,7 @@ class ConsoleReader
 
 			// Reverse direction if switching between ',' and ';'
 			if ($this->charSearchLastInvokeChar === ';' || $this->charSearchLastInvokeChar === ',') {
-				if ($this->charSearchLastInvokeChar !== $this->invokeChar) {
+				if ($this->charSearchLastInvokeChar !== $invokeChar) {
 					$this->charSearchFirstInvokeChar = $this->switchCase($this->charSearchFirstInvokeChar);
 				}
 			}
@@ -1350,7 +1350,7 @@ class ConsoleReader
 		$comment = $this->getCommentBegin ();
 		$this->setCursorPosition(0);
 		$this->putString($comment);
-		if ($this->isViMode) {
+		if ($isViMode) {
 			$this->consoleKeys->setKeyMap(KeyMap::VI_INSERT);
 		}
 		return $this->accept();
@@ -1375,7 +1375,7 @@ class ConsoleReader
 			} else if ($this->mask == self::NULL_MASK) {
 				// don't print anything
 			} else {
-				$this->print($this->mask, strlen($str));
+				$this->_print($this->mask, strlen($str));
 			}
 		}
 		$this->drawBuffer();
@@ -1427,12 +1427,12 @@ class ConsoleReader
 					 * Backspacing through the "prompt" aborts the search.
 					 */
 					if ($this->buf->cursor == 0) {
-						$this->isAborted = true;
+						$isAborted = true;
 					}
 					break;
 				case "\012": // NL
 				case "\015": // CR
-					$this->isComplete = true;
+					$isComplete = true;
 					break;
 				default:
 					$this->putString($ch);
@@ -1442,7 +1442,7 @@ class ConsoleReader
 		}
 
 		// If we aborted, then put ourself at the end of the original buffer.
-		if ($ch == -1 || $this->isAborted) {
+		if ($ch == -1 || $isAborted) {
 			$this->setCursorPosition(0);
 			$this->killLine();
 			$this->putString($origBuffer->buffer);
@@ -2601,7 +2601,7 @@ class ConsoleReader
 							// Similar to delete-to, a "yy" yanks the whole line.
 							if ($this->state == State::VI_YANK_TO) {
 								$this->yankBuffer = $this->buf->buffer->__toString();
-								$his->state = $origState = State::NORMAL;
+								$this->state = $origState = State::NORMAL;
 							}
 							else {
 								$this->state = State::VI_YANK_TO;
@@ -3174,7 +3174,7 @@ class ConsoleReader
 
 				if (--$showLines == 0) {
 					// Overflow
-					$this->print("--More--"); // TODO: language-item
+					$this->_print("--More--"); // TODO: language-item
 					$this->flush();
 					$c = $this->readCharacter();
 					if (c === "\r" || $c === "\n") {
