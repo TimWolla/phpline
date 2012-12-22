@@ -3177,7 +3177,7 @@ class ConsoleReader
 					$this->_print("--More--"); // TODO: language-item
 					$this->flush();
 					$c = $this->readCharacter();
-					if (c === "\r" || $c === "\n") {
+					if ($c === "\r" || $c === "\n") {
 						// one step forward
 						$showLines = 1;
 					}
