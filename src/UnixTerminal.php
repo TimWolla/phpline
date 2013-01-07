@@ -98,4 +98,22 @@ class UnixTerminal extends TerminalSupport
 			Log::error("Failed to ", ($enabled ? "enable" : "disable"), " echo");
 		}
 	}
+	
+	public function disableInterruptCharacter() {
+		try {
+			$this->settings->set("intr undef");
+		}
+		catch (\Exception $e) {
+			Log::error("Failed to disable interrupt character", $e);
+		}
+	}
+	
+	public function enableInterruptCharacter() {
+		try {
+			$this->settings->set("intr ^C");
+		}
+		catch (\Exception $e) {
+			Log::error("Failed to enable interrupt character", $e);
+		}
+	}
 }

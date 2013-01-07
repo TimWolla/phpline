@@ -11,6 +11,7 @@ namespace phpline\console;
 
 use phpline\Terminal;
 use phpline\TerminalFactory;
+use phpline\UnixTerminal;
 use phpline\console\completer\CandidateListCompletionHandler;
 use phpline\console\completer\Completer;
 use phpline\console\completer\CompletionHandler;
@@ -97,6 +98,8 @@ class ConsoleReader
 	private $expandEvents = true;
 
 	private $bellEnabled = false;
+	
+	private $handleUserInterrupt = false;
 
 	private $mask;
 
@@ -263,7 +266,29 @@ class ConsoleReader
 	public function getBellEnabled() {
 		return $this->bellEnabled;
 	}
-
+	
+	/**
+	 * Set whether user interrupts (ctrl-C) are handled by having JLine
+	 * throw {@link UserInterruptException} from {@link #readLine}.
+	 * Otherwise, the JVM will handle {@code SIGINT} as normal, which
+	 * usually causes it to exit. The default is {@code false}.
+	 *
+	 * @since 2.10
+	 */
+	public function setHandleUserInterrupt($enabled) {
+		$this->handleUserInterrupt = $enabled;
+	}
+	
+	/**
+	 * Get whether user interrupt is enabled
+	 * 
+	 * @return true if enabled; false otherwise
+	 * @since 2.10
+	 */
+	public function getHandleUserInterrupt() {
+		return $this->handleUserInterrupt;
+	}
+	
 	/**
 	 * Sets the string that will be used to start a comment when the
 	 * insert-comment key is struck.
@@ -2031,6 +2056,9 @@ class ConsoleReader
 			if (!$_this->getTerminal()->isSupported()) {
 				$_this->afterReadLine();
 			}
+			if ($_this->getHandleUserInterrupt() && ($_this->getTerminal() instanceof UnixTerminal)) {
+				$_this->getTerminal()->enableInterruptCharacter();
+			}
 		});
 		if (!$this->terminal->isSupported()) {
 			$this->beforeReadLine($prompt, $mask);
@@ -2046,6 +2074,10 @@ class ConsoleReader
 			return $this->readLineSimple();
 		}
 
+		if ($this->handleUserInterrupt && ($this->terminal instanceof UnixTerminal)) {
+			$this->terminal->disableInterruptCharacter();
+		}
+		
 		$originalPrompt = $this->prompt;
 
 		$this->state = State::NORMAL;
@@ -2305,7 +2337,16 @@ class ConsoleReader
 
 						case Operation::ACCEPT_LINE:
 							return $this->accept();
-
+						
+						case Operation::INTERRUPT:
+							if ($this->handleUserInterrupt) {
+								$this->println();
+								$this->flush();
+								$partialLine = $this->buf->buffer->__toString();
+								$this->buf->clear();
+								throw new UserInterruptException($partialLine);
+							}
+							break;
 						/*
 						 * VI_MOVE_ACCEPT_LINE is the result of an ENTER
 						 * while in move mode. This is the same as a normal
