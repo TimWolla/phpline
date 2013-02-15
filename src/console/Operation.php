@@ -65,6 +65,7 @@ class Operation {
 	const INSERT_CLOSE_SQUARE = 44;
 	const INSERT_COMMENT = 45;
 	const INSERT_COMPLETIONS = 46;
+	const INTERRUPT = 137;
 	const KILL_WHOLE_LINE = 47;
 	const KILL_LINE = 48;
 	const KILL_REGION = 49;
