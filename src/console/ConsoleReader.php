@@ -155,7 +155,16 @@ class ConsoleReader
 	private $commentBegin = null;
 
 	private $skipLF = false;
-
+	
+	/**
+	 * Set to true if the reader should attempt to detect copy-n-paste. The
+	 * effect of this that an attempt is made to detect if tab is quickly 
+	 * followed by another character, then it is assumed that the tab was
+	 * a literal tab as part of a copy-and-paste operation and is inserted as
+	 * such.
+	 */
+	private $copyPasteDetection = false;
+	
 	/*
 	 * Current internal state of the line reader
 	 */
@@ -246,7 +255,24 @@ class ConsoleReader
 	public function getExpandEvents() {
 		return $this->expandEvents;
 	}
-
+	
+	/**
+	 * Enables or disables copy and paste detection. The effect of enabling this
+	 * this setting is that when a tab is received immediately followed by another
+	  * character, the tab will not be treated as a completion, but as a tab literal.
+	 * @param onoff true if detection is enabled
+	 */
+	public function setCopyPasteDetection($onoff) {
+		$this->copyPasteDetection = $onoff;
+	}
+	
+	/**
+	 * @return true if copy and paste detection is enabled.
+	 */
+	public function isCopyPasteDetectionEnabled() {
+		return $this->copyPasteDetection;
+	}
+	
 	/**
 	 * Set whether the console bell is enabled.
 	 *
@@ -2304,7 +2330,22 @@ class ConsoleReader
 
 					switch ( $op ) {
 						case Operation::COMPLETE: // tab
-							$success = $this->complete();
+							 // There is an annoyance with tab completion in that
+							// sometimes the user is actually pasting input in that
+							// has physical tabs in it.  This attempts to look at how
+							// quickly a character follows the tab, if the character
+							// follows *immediately*, we assume it is a tab literal.
+							$isTabLiteral = false;
+							if ($this->copyPasteDetection && $c == 9 && (!empty($pushBackChar) || ($this->in->isNonBlockingEnabled() && $this->in->peek($this->escapeTimeout) != -2))) {
+								$isTabLiteral = true;
+							}
+							
+							if (!$isTabLiteral) {
+								$success = $this->complete();
+							}
+							else {
+								$this->putString($sb->__toString());
+							}
 							break;
 
 						case Operation::POSSIBLE_COMPLETIONS:
