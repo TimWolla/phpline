@@ -63,9 +63,6 @@ class UnixTerminal extends TerminalSupport
 	public function restore() {
 		$this->settings->restore();
 		parent::restore();
-		// print a newline after the terminal exits.
-		// this should probably be a configurable.
-		echo PHP_EOL;
 	}
 	
 	/**
