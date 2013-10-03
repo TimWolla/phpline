@@ -25,7 +25,7 @@ class TerminalFactory
 	public static function create() {
 		$type = Configuration::getString("phpline.terminal", "auto");
 		
-		if ($_SERVER['TERM'] === 'dumb') {
+		if (isset($_SERVER['TERM']) && $_SERVER['TERM'] === 'dumb') {
 			$type = "none";
 			Log::debug("\$TERM=dumb; setting type=", $type);
 		}
